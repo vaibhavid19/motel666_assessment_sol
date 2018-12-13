@@ -22,8 +22,7 @@ public class UserEventService {
     }
 
     public Iterable<UserEvent> getEventWithinTimeframe(Date fromDate, Date toDate) {
-        //return userEventRepository.save(userEvent);
-        return null;
+        return userEventRepository.findAllBetweenTimestamp(fromDate, toDate);
     }
 
     public UserEvent getEventsByUserId(Long userId){

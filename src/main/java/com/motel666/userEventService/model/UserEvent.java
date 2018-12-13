@@ -22,8 +22,13 @@ public class UserEvent {
 
     public UserEvent() {}
 
-    public UserEvent(Long userId, String type, Date timestamp, String context) {
+    public UserEvent(String userName) {
+        this.userName = userName;
+    }
+
+    public UserEvent(Long userId, String userName, String type, Date timestamp, String context) {
         this.userId = userId;
+        this.userName = userName;
         this.type = type;
         this.timestamp = timestamp;
         this.context = context;

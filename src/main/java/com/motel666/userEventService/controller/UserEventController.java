@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("user")
@@ -28,7 +29,7 @@ public class UserEventController {
 
     //    As a reporting user, I can request a list of all user events for a single user, specified by their user id.
     @GetMapping("/events/get/user/{userId}")//
-    public Iterable<UserEvent> getEventsByUserId(@PathVariable Long userId) {
-        return userEventService.getEventsByUserId(userId);
+    public List<UserEvent> getEventsByUserId(@PathVariable String userId) {
+        return userEventService.getEventsByUserName(userId);
     }
 }
