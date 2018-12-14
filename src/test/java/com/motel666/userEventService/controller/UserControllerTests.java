@@ -3,11 +3,9 @@ package com.motel666.userEventService.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.motel666.userEventService.model.UserEvent;
 import com.motel666.userEventService.service.UserEventService;
-import com.vaibhavi.thanksgivingproject.entity.Item;
-import com.vaibhavi.thanksgivingproject.repository.ItemRepository;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -44,15 +40,16 @@ public class UserControllerTests {
     @Autowired
     private ObjectMapper mapper;
 
-    @MockBean
+    @Mock
     UserEventService userEventService;
 
     @Before
     public void setUp(){}
 
     @Test
-    public void createCharacterTest() throws Exception {
-        UserEvent testEvent = new UserEvent("testuser");
+    public void test_addUserEvent() throws Exception {
+        UserEvent testEvent = new UserEvent("TESTUSER");
+        testEvent.setUserId(10L);
         when(userEventService.addUserEvent(testEvent)).thenReturn(testEvent);
 
         String json = mapper.writeValueAsString(testEvent);
@@ -61,8 +58,49 @@ public class UserControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                  .content(json))
                 .andExpect(status().isOk());
-        verify(userEventService,times(1)).addUserEvent(isA(UserEvent.class);
+        verify(userEventService,times(1)).addUserEvent(isA(UserEvent.class));
         verifyNoMoreInteractions(userEventService);
     }
+
+    @Test
+    public void test_getEventWithinTimeframe() throws Exception {
+        UserEvent testEvent = new UserEvent("TESTUSER");
+        testEvent.setUserId(10L);
+        List<UserEvent> events = new ArrayList<>();
+        events.add(testEvent);
+        Date testDate = new Date();
+
+        when(userEventService.getEventWithinTimeframe(testDate, testDate)).thenReturn(events);
+
+        String json = mapper.writeValueAsString(testEvent);
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/user/events/get/timeframe/", testDate, testDate)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+        verify(userEventService,times(1)).getEventWithinTimeframe(isA(Date.class), isA(Date.class));
+        verifyNoMoreInteractions(userEventService);
+    }
+
+    @Test
+    public void test_getEventsByUserId() throws Exception {
+        UserEvent testEvent = new UserEvent("TESTUSER");
+        testEvent.setUserId(10L);
+        List<UserEvent> events = new ArrayList<>();
+        events.add(testEvent);
+        when(userEventService.getEventsByUserName("TESTUSER")).thenReturn(events);
+        Date testDate = new Date();
+
+        String json = mapper.writeValueAsString(testEvent);
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/user/events/get/user/TESTUSER")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+                .andExpect(status().isOk());
+        verify(userEventService,times(1)).getEventsByUserName("TESTUSER");
+        verifyNoMoreInteractions(userEventService);
+    }
+
+    
 
 }
