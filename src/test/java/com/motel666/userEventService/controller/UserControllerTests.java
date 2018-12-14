@@ -48,7 +48,7 @@ public class UserControllerTests {
 
     @Test
     public void test_addUserEvent() throws Exception {
-        UserEvent testEvent = new UserEvent("TESTUSER");
+        UserEvent testEvent = new UserEvent();
         testEvent.setUserId(10L);
         when(userEventService.addUserEvent(testEvent)).thenReturn(testEvent);
 
